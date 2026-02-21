@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <meta name="google-site-verification" content="xrZFu5cpuycZgitIQWcRT0DmD7er9zSVNmzWktTYs10" />
-    <title>ChromePortal | Fixed</title> 
+    <title>ChromePortal | Full Click</title> 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌀</text></svg>">
     
     <style>
@@ -30,7 +30,6 @@
         }
 
         .container { width: 100%; max-width: 900px; }
-
         header { text-align: center; margin-bottom: 30px; }
         h1 { font-size: 2.5rem; color: var(--accent); margin: 0; }
 
@@ -61,21 +60,20 @@
             display: flex; flex-direction: column; align-items: center;
             position: relative; transition: 0.3s; animation: pop 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            cursor: pointer; /* Pointer cursor for the whole card */
         }
         @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .link-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-        .link-card img { width: 32px; height: 32px; margin-bottom: 10px; border-radius: 4px; }
-        .link-card a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-align: center; }
+        .link-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); background: #fdfdfd; }
+        .link-card img { width: 32px; height: 32px; margin-bottom: 10px; border-radius: 4px; pointer-events: none; }
+        .link-card a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-align: center; pointer-events: none; }
 
         .delete-btn {
             position: absolute; top: 5px; right: 5px; background: var(--danger);
             color: white; border: none; width: 22px; height: 22px; border-radius: 50%;
-            cursor: pointer; display: none; font-size: 12px;
+            cursor: pointer; display: none; font-size: 12px; z-index: 10;
         }
         .link-card:hover .delete-btn { display: block; }
-
-        @media (max-width: 600px) { .input-panel { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -100,46 +98,23 @@
 </div>
 
 <script>
-    // 1. Data load karne ka sabse safe tareeka
-    let allLinks = [];
-    const savedData = localStorage.getItem('chromePortalLinks');
-    if (savedData) {
-        allLinks = JSON.parse(savedData);
-    }
+    let allLinks = JSON.parse(localStorage.getItem('chromePortalLinks')) || [];
 
-    // 2. Page load hote hi links dikhana
-    window.onload = function() {
-        displayLinks();
-    };
+    window.onload = function() { displayLinks(); };
 
-    // 3. Link add karne ka function
     function addLink() {
         const nameInput = document.getElementById('siteName');
         const urlInput = document.getElementById('siteUrl');
-        
         const name = nameInput.value.trim();
         let url = urlInput.value.trim();
 
-        if (!name || !url) {
-            alert("Bhai, dono fields bharna zaroori hai!");
-            return;
-        }
+        if (!name || !url) { alert("Dono fields bharna zaroori hai!"); return; }
+        if (!url.startsWith('http')) url = 'https://' + url;
 
-        // URL fix (agar https nahi lagaya)
-        if (!url.startsWith('http')) {
-            url = 'https://' + url;
-        }
-
-        const newLink = { 
-            name: name, 
-            url: url, 
-            id: Date.now() 
-        };
-
+        const newLink = { name, url, id: Date.now() };
         allLinks.push(newLink);
         saveAndRefresh();
 
-        // Input clear karna
         nameInput.value = '';
         urlInput.value = '';
     }
@@ -156,12 +131,19 @@
         data.forEach(link => {
             const card = document.createElement('div');
             card.className = 'link-card';
+            // Pura card click hone par link khulega
+            card.onclick = function(e) {
+                // Agar delete button pe click hua toh link mat kholo
+                if (e.target.classList.contains('delete-btn')) return;
+                window.open(link.url, '_blank');
+            };
+
             const icon = `https://www.google.com/s2/favicons?sz=64&domain=${link.url}`;
             
             card.innerHTML = `
-                <button class="delete-btn" onclick="deleteLink(${link.id})">✕</button>
+                <button class="delete-btn" onclick="event.stopPropagation(); deleteLink(${link.id})">✕</button>
                 <img src="${icon}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1243/1243933.png'">
-                <a href="${link.url}" target="_blank">${link.name}</a>
+                <a href="${link.url}" onclick="event.preventDefault()">${link.name}</a>
             `;
             grid.appendChild(card);
         });
@@ -178,12 +160,7 @@
         displayLinks(filtered);
     }
 
-    // "Enter" key se bhi save hoga
-    document.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            addLink();
-        }
-    });
+    document.addEventListener('keypress', (e) => { if (e.key === 'Enter') addLink(); });
 </script>
 
 </body>
