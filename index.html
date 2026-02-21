@@ -26,10 +26,15 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
         }
 
-        .container { width: 100%; max-width: 900px; }
+        .container { 
+            width: 100%; 
+            max-width: 900px; 
+            padding: 20px;
+            flex: 1; /* Pushes footer to bottom */
+        }
+
         header { text-align: center; margin-bottom: 30px; }
         h1 { font-size: 2.5rem; color: var(--accent); margin: 0; }
 
@@ -37,6 +42,7 @@
         #searchBar {
             width: 100%; padding: 15px 20px; border-radius: 50px;
             border: 1px solid rgba(0,0,0,0.1); outline: none; box-shadow: var(--shadow);
+            box-sizing: border-box;
         }
 
         .input-panel {
@@ -60,7 +66,7 @@
             display: flex; flex-direction: column; align-items: center;
             position: relative; transition: 0.3s; animation: pop 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            cursor: pointer; /* Pointer cursor for the whole card */
+            cursor: pointer;
         }
         @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
@@ -74,6 +80,23 @@
             cursor: pointer; display: none; font-size: 12px; z-index: 10;
         }
         .link-card:hover .delete-btn { display: block; }
+
+        .site-footer {
+            flex-shrink: 0;
+            padding: 25px;
+            text-align: center;
+            color: #636e72;
+            font-size: 0.9rem;
+            width: 100%;
+            font-weight: 500;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.2);
+        }
+
+        @media (max-width: 600px) { 
+            .input-panel { grid-template-columns: 1fr; } 
+        }
     </style>
 </head>
 <body>
@@ -96,6 +119,10 @@
 
     <div id="linkGrid" class="link-grid"></div>
 </div>
+
+<footer class="site-footer">
+    Created on 21 Feb 2026
+</footer> 
 
 <script>
     let allLinks = JSON.parse(localStorage.getItem('chromePortalLinks')) || [];
@@ -131,9 +158,7 @@
         data.forEach(link => {
             const card = document.createElement('div');
             card.className = 'link-card';
-            // Pura card click hone par link khulega
             card.onclick = function(e) {
-                // Agar delete button pe click hua toh link mat kholo
                 if (e.target.classList.contains('delete-btn')) return;
                 window.open(link.url, '_blank');
             };
