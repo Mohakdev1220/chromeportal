@@ -6,30 +6,34 @@
     <title>ChromePortal | Dashboard</title>
     <style>
         :root {
-            --bg: #0b0f1a;
-            --card: #161e2d;
-            --text: #f1f5f9;
-            --accent: #38bdf8;
-            --danger: #ef4444;
-            --input-bg: #1e293b;
-            --border: #334155;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-main: #2d3436;
+            --accent: #0984e3;
+            --danger: #d63031;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            animation: fadeIn 0.8s ease-in;
         }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 900px;
         }
 
         header {
@@ -38,53 +42,54 @@
         }
 
         h1 {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             margin: 10px 0;
-            background: linear-gradient(90deg, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--accent);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
         /* Search Section */
         .search-container {
-            margin-bottom: 30px;
-            position: relative;
+            margin-bottom: 25px;
         }
 
         #searchBar {
             width: 100%;
             padding: 15px 20px;
-            font-size: 1.1rem;
-            background: var(--card);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            color: white;
+            font-size: 1rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            color: var(--text-main);
             box-sizing: border-box;
             outline: none;
+            box-shadow: var(--shadow);
             transition: 0.3s;
         }
 
         #searchBar:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+            background: white;
+            box-shadow: 0 0 20px rgba(9, 132, 227, 0.2);
         }
 
         /* Input Panel */
         .input-panel {
-            background: var(--card);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
             padding: 20px;
             border-radius: 16px;
             display: grid;
             grid-template-columns: 1fr 1fr auto;
             gap: 12px;
             margin-bottom: 40px;
-            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
         }
 
         input {
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            color: white;
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #ddd;
+            color: #333;
             padding: 12px;
             border-radius: 8px;
             outline: none;
@@ -92,58 +97,63 @@
 
         .add-btn {
             background: var(--accent);
-            color: #0b0f1a;
+            color: white;
             padding: 12px 25px;
             border: none;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .add-btn:hover {
-            filter: brightness(1.2);
-            transform: translateY(-2px);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.3);
         }
 
         /* Grid System */
         .link-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
         }
 
         .link-card {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: var(--card-bg);
+            backdrop-filter: blur(5px);
             border-radius: 12px;
-            height: 100px;
+            padding: 15px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
             transition: 0.3s;
-            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            animation: popIn 0.4s ease-out;
+            border: 1px solid rgba(255,255,255,0.5);
         }
 
         .link-card:hover {
-            border-color: var(--accent);
-            background: #1e293b;
-            transform: scale(1.03);
+            transform: translateY(-8px);
+            background: white;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        .link-card img {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 10px;
+            border-radius: 4px;
         }
 
         .link-card a {
-            color: var(--text);
+            color: var(--text-main);
             text-decoration: none;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9rem;
             text-align: center;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
+            word-break: break-all;
         }
 
         .delete-btn {
@@ -153,44 +163,37 @@
             background: var(--danger);
             color: white;
             border: none;
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
             font-size: 10px;
-            opacity: 0;
-            transition: 0.2s;
+            display: none;
+            font-weight: bold;
         }
 
         .link-card:hover .delete-btn {
-            opacity: 1;
+            display: block;
         }
 
-        .empty-msg {
-            text-align: center;
-            color: #64748b;
-            grid-column: 1 / -1;
-            padding: 40px;
-        }
-
-        /* Footer Utilities */
         .footer-tools {
             margin-top: 50px;
-            text-align: center;
-            border-top: 1px solid var(--border);
-            padding-top: 20px;
+            padding-bottom: 40px;
         }
 
         .util-btn {
-            background: transparent;
-            color: #64748b;
-            border: 1px solid #64748b;
-            padding: 5px 15px;
-            border-radius: 5px;
+            background: white;
+            color: #636e72;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 20px;
             cursor: pointer;
             font-size: 0.8rem;
             margin: 0 5px;
+            transition: 0.2s;
         }
+
+        .util-btn:hover { background: #f1f1f1; }
 
         @media (max-width: 600px) {
             .input-panel { grid-template-columns: 1fr; }
@@ -202,25 +205,24 @@
 <div class="container">
     <header>
         <h1>ChromePortal</h1>
-        <p style="color: #64748b;">Your Personalized Unlimited Hub</p>
+        <p>Your Infinite Shortcut Hub</p>
     </header>
 
     <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Search your shortcuts..." onkeyup="filterLinks()">
+        <input type="text" id="searchBar" placeholder="Search saved links..." onkeyup="filterLinks()">
     </div>
 
     <div class="input-panel">
-        <input type="text" id="siteName" placeholder="Name (e.g. Gmail)">
-        <input type="text" id="siteUrl" placeholder="URL (e.g. gmail.com)">
-        <button class="add-btn" onclick="addLink()">+ Create</button>
+        <input type="text" id="siteName" placeholder="Name">
+        <input type="text" id="siteUrl" placeholder="URL (e.g. twitter.com)">
+        <button class="add-btn" onclick="addLink()">Create Shortcut</button>
     </div>
 
-    <div id="linkGrid" class="link-grid">
-        </div>
+    <div id="linkGrid" class="link-grid"></div>
 
     <div class="footer-tools">
-        <button class="util-btn" onclick="exportData()">Backup Links</button>
-        <button class="util-btn" onclick="importData()">Restore Backup</button>
+        <button class="util-btn" onclick="exportData()">Backup</button>
+        <button class="util-btn" onclick="importData()">Restore</button>
     </div>
 </div>
 
@@ -234,7 +236,6 @@
         let url = document.getElementById('siteUrl').value.trim();
 
         if (!name || !url) return alert("Fill both fields!");
-
         if (!url.startsWith('http')) url = 'https://' + url;
 
         const newLink = { name, url, id: Date.now() };
@@ -245,20 +246,21 @@
         document.getElementById('siteUrl').value = '';
     }
 
+    function getFavicon(url) {
+        // Uses Google's favicon service to get the logo
+        return `https://www.google.com/s2/favicons?sz=64&domain=${url}`;
+    }
+
     function displayLinks(data = allLinks) {
         const grid = document.getElementById('linkGrid');
         grid.innerHTML = '';
-
-        if (data.length === 0) {
-            grid.innerHTML = '<div class="empty-msg">No shortcuts found. Add your first one above!</div>';
-            return;
-        }
 
         data.forEach(link => {
             const card = document.createElement('div');
             card.className = 'link-card';
             card.innerHTML = `
                 <button class="delete-btn" onclick="deleteLink(${link.id})">✕</button>
+                <img src="${getFavicon(link.url)}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1243/1243933.png'" alt="icon">
                 <a href="${link.url}" target="_blank">${link.name}</a>
             `;
             grid.appendChild(card);
@@ -267,10 +269,7 @@
 
     function filterLinks() {
         const term = document.getElementById('searchBar').value.toLowerCase();
-        const filtered = allLinks.filter(l => 
-            l.name.toLowerCase().includes(term) || 
-            l.url.toLowerCase().includes(term)
-        );
+        const filtered = allLinks.filter(l => l.name.toLowerCase().includes(term));
         displayLinks(filtered);
     }
 
@@ -284,31 +283,34 @@
         displayLinks();
     }
 
-    // Utility Features
     function exportData() {
-        const dataStr = JSON.stringify(allLinks);
-        const blob = new Blob([dataStr], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'chrome-portal-backup.json';
-        link.click();
+        const blob = new Blob([JSON.stringify(allLinks)], {type: "application/json"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'chrome-portal-backup.json';
+        a.click();
     }
 
     function importData() {
         const input = document.createElement('input');
         input.type = 'file';
         input.onchange = e => {
-            const file = e.target.files[0];
             const reader = new FileReader();
-            reader.onload = event => {
-                allLinks = JSON.parse(event.target.result);
+            reader.onload = ev => {
+                allLinks = JSON.parse(ev.target.result);
                 saveAndRefresh();
             };
-            reader.readAsText(file);
+            reader.readAsText(e.target.files[0]);
         };
         input.click();
+    
+    } 
+    // Add this inside your <script> tag to make the Enter key work
+document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        addLink();
     }
+});
 </script>
 
 </body>
