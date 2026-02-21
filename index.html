@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChromePortal | Dashboard</title> 
+    <title>ChromePortal | Fixed</title> 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌀</text></svg>">
     
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-bg: rgba(255, 255, 255, 0.9);
             --text-main: #2d3436;
             --accent: #0984e3;
             --danger: #d63031;
@@ -17,152 +17,64 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: var(--bg-gradient);
             background-attachment: fixed;
-            color: var(--text-main);
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
-            animation: fadeIn 0.8s ease-in;
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .container { width: 100%; max-width: 900px; }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-        }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { font-size: 2.5rem; color: var(--accent); margin: 0; }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin: 10px 0;
-            color: var(--accent);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .search-container {
-            margin-bottom: 25px;
-        }
-
+        .search-container { margin-bottom: 25px; }
         #searchBar {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1rem;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 50px;
-            color: var(--text-main);
-            box-sizing: border-box;
-            outline: none;
-            box-shadow: var(--shadow);
-            transition: 0.3s;
+            width: 100%; padding: 15px 20px; border-radius: 50px;
+            border: 1px solid rgba(0,0,0,0.1); outline: none; box-shadow: var(--shadow);
         }
 
         .input-panel {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 16px;
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 12px;
-            margin-bottom: 40px;
+            background: var(--card-bg); padding: 20px; border-radius: 16px;
+            display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; margin-bottom: 40px;
             box-shadow: var(--shadow);
         }
 
-        input {
-            background: rgba(255,255,255,0.9);
-            border: 1px solid #ddd;
-            color: #333;
-            padding: 12px;
-            border-radius: 8px;
-            outline: none;
-        }
+        input { padding: 12px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
 
         .add-btn {
-            background: var(--accent);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
+            background: var(--accent); color: white; border: none; padding: 12px 25px;
+            border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s;
         }
+        .add-btn:hover { transform: scale(1.03); background: #0773c5; }
 
-        .add-btn:hover { transform: scale(1.05); }
-
-        .link-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 20px;
-        }
-
+        .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; }
+        
         .link-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(5px);
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            animation: popIn 0.4s ease-out;
-            border: 1px solid rgba(255,255,255,0.5);
+            background: white; border-radius: 12px; padding: 15px;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; transition: 0.3s; animation: pop 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
+        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .link-card:hover { transform: translateY(-8px); background: white; }
-
-        .link-card img {
-            width: 32px;
-            height: 32px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-        }
-
-        .link-card a {
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-align: center;
-            word-break: break-all;
-        }
+        .link-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+        .link-card img { width: 32px; height: 32px; margin-bottom: 10px; border-radius: 4px; }
+        .link-card a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-align: center; }
 
         .delete-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 10px;
-            display: none;
+            position: absolute; top: 5px; right: 5px; background: var(--danger);
+            color: white; border: none; width: 22px; height: 22px; border-radius: 50%;
+            cursor: pointer; display: none; font-size: 12px;
         }
-
         .link-card:hover .delete-btn { display: block; }
 
-        @media (max-width: 600px) {
-            .input-panel { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 600px) { .input-panel { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -170,16 +82,16 @@
 <div class="container">
     <header>
         <h1>ChromePortal</h1>
-        <p>Your Infinite Shortcut Hub</p>
+        <p>Persistent Shortcut Dashboard</p>
     </header>
 
     <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Search saved links..." onkeyup="filterLinks()">
+        <input type="text" id="searchBar" placeholder="Search saved links..." oninput="filterLinks()">
     </div>
 
     <div class="input-panel">
-        <input type="text" id="siteName" placeholder="Name">
-        <input type="text" id="siteUrl" placeholder="URL (e.g. google.com)">
+        <input type="text" id="siteName" placeholder="Name (e.g. YouTube)">
+        <input type="text" id="siteUrl" placeholder="URL (e.g. youtube.com)">
         <button class="add-btn" onclick="addLink()">Create Shortcut</button>
     </div>
 
@@ -187,14 +99,19 @@
 </div>
 
 <script>
-    // Data load logic - Ye kabhi delete nahi hoga
-    let allLinks = JSON.parse(localStorage.getItem('chromePortalLinks')) || [];
+    // 1. Data load karne ka sabse safe tareeka
+    let allLinks = [];
+    const savedData = localStorage.getItem('chromePortalLinks');
+    if (savedData) {
+        allLinks = JSON.parse(savedData);
+    }
 
-    // Initial display
+    // 2. Page load hote hi links dikhana
     window.onload = function() {
         displayLinks();
     };
 
+    // 3. Link add karne ka function
     function addLink() {
         const nameInput = document.getElementById('siteName');
         const urlInput = document.getElementById('siteUrl');
@@ -202,18 +119,71 @@
         const name = nameInput.value.trim();
         let url = urlInput.value.trim();
 
-        if (!name || !url) return alert("Please fill both fields!");
-        if (!url.startsWith('http')) url = 'https://' + url;
+        if (!name || !url) {
+            alert("Bhai, dono fields bharna zaroori hai!");
+            return;
+        }
 
-        const newLink = { name, url, id: Date.now() };
+        // URL fix (agar https nahi lagaya)
+        if (!url.startsWith('http')) {
+            url = 'https://' + url;
+        }
+
+        const newLink = { 
+            name: name, 
+            url: url, 
+            id: Date.now() 
+        };
+
         allLinks.push(newLink);
-        
         saveAndRefresh();
 
-        // Clear inputs
+        // Input clear karna
         nameInput.value = '';
         urlInput.value = '';
     }
 
-    function getFavicon(url) {
-        return `https://www
+    function saveAndRefresh() {
+        localStorage.setItem('chromePortalLinks', JSON.stringify(allLinks));
+        displayLinks();
+    }
+
+    function displayLinks(data = allLinks) {
+        const grid = document.getElementById('linkGrid');
+        grid.innerHTML = '';
+
+        data.forEach(link => {
+            const card = document.createElement('div');
+            card.className = 'link-card';
+            const icon = `https://www.google.com/s2/favicons?sz=64&domain=${link.url}`;
+            
+            card.innerHTML = `
+                <button class="delete-btn" onclick="deleteLink(${link.id})">✕</button>
+                <img src="${icon}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1243/1243933.png'">
+                <a href="${link.url}" target="_blank">${link.name}</a>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function deleteLink(id) {
+        allLinks = allLinks.filter(l => l.id !== id);
+        saveAndRefresh();
+    }
+
+    function filterLinks() {
+        const term = document.getElementById('searchBar').value.toLowerCase();
+        const filtered = allLinks.filter(l => l.name.toLowerCase().includes(term));
+        displayLinks(filtered);
+    }
+
+    // "Enter" key se bhi save hoga
+    document.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            addLink();
+        }
+    });
+</script>
+
+</body>
+</html>
