@@ -3,165 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChromePortal | NextGen</title>
+    <title>ChromePortal | Mohak Dev</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
         :root {
-            --glass: rgba(255, 255, 255, 0.8);
-            --blur: blur(10px);
-            --accent: #6c5ce7;
-            --danger: #ff4757;
-            --text: #2d3436;
+            --bg: #f4f9ff;
+            --primary: #007aff;
+            --text: #1d1d1f;
+            --danger: #ff3b30;
         }
 
         body {
             margin: 0;
-            font-family: 'Inter', -apple-system, sans-serif;
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            background-attachment: fixed;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #ffffff; /* ChatGPT starts clean white */
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            color: var(--text);
+            overflow-x: hidden;
         }
 
-        /* --- AUTH SCREEN --- */
+        /* --- CHATGPT STYLE INTRO SCREEN --- */
         #login-screen {
             position: fixed; inset: 0; z-index: 1000;
             display: flex; justify-content: center; align-items: center;
-            background: inherit;
+            background: radial-gradient(circle at center, #ffffff 0%, #eef6ff 100%);
+            animation: fadeInScreen 1s ease-out forwards;
         }
-        .auth-card {
-            background: var(--glass);
-            backdrop-filter: var(--blur);
-            padding: 40px; border-radius: 24px;
-            width: 360px; text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            animation: cardEntrance 0.7s ease-out;
+
+        .hero-box {
+            background: #ffffff; 
+            padding: 60px 50px; 
+            border-radius: 32px;
+            width: 420px; 
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
         }
+
+        .hero-box img { 
+            width: 90px; height: 90px; 
+            border-radius: 22px; 
+            margin-bottom: 25px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .hero-box h1 { 
+            font-weight: 800; font-size: 2.4rem; 
+            margin: 0 0 10px 0; letter-spacing: -1px;
+        }
+
         .auth-btn {
-            width: 100%; padding: 14px; margin: 10px 0; border: none;
-            border-radius: 12px; font-weight: 700; cursor: pointer;
+            width: 100%; padding: 16px; margin: 10px 0; border: none;
+            border-radius: 14px; font-weight: 700; cursor: pointer;
             transition: all 0.3s ease; font-size: 1rem;
         }
-        .google-btn { background: white; color: #444; border: 1px solid #ddd; }
-        .google-btn:hover { background: #f1f1f1; transform: translateY(-2px); }
-        .email-btn { background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); }
-        .email-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4); }
 
-        /* --- DASHBOARD --- */
-        #dashboard { display: none; width: 90%; max-width: 1100px; margin: 40px auto; flex: 1; }
-        .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .google-btn { background: #000; color: #fff; }
+        .google-btn:hover { background: #333; transform: scale(1.02); }
+
+        .email-input-group { margin-top: 20px; text-align: left; }
         
-        .main-input {
-            background: var(--glass); backdrop-filter: var(--blur);
-            padding: 25px; border-radius: 20px;
-            display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
         input {
-            padding: 14px 20px; border-radius: 12px; border: 2px solid transparent;
-            outline: none; background: rgba(255,255,255,0.5); transition: 0.3s;
-            font-size: 1rem;
+            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px;
+            border: 1px solid #e5e5e5; font-size: 1rem; outline: none;
+            box-sizing: border-box; transition: 0.3s;
         }
-        input:focus { border-color: var(--accent); background: white; }
+        input:focus { border-color: var(--primary); background: #f9f9f9; }
 
-        /* --- CARDS GRID --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 25px; margin-top: 40px; }
+        .email-btn { background: #f2f2f7; color: #000; }
+        .email-btn:hover { background: #e5e5ea; }
+
+        .guest-btn { background: none; color: #8e8e93; text-decoration: underline; margin-top: 15px; cursor: pointer; border:none; width: 100%;}
+
+        /* --- DASHBOARD UI --- */
+        header {
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px);
+            padding: 18px 8%; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-area img { width: 42px; height: 42px; border-radius: 10px; }
+        .logo-area h1 { font-size: 1.5rem; margin: 0; color: #000; font-weight: 800; letter-spacing: -0.5px; }
+
+        #dashboard { display: none; width: 90%; max-width: 1000px; margin: 60px auto; flex: 1; opacity: 0; }
+        .show-dash { animation: fadeInScreen 0.8s ease forwards; }
+
+        .input-panel {
+            background: white; padding: 25px; border-radius: 24px;
+            display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03); margin-bottom: 50px;
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 25px; }
         .card {
-            background: var(--glass); backdrop-filter: var(--blur);
-            padding: 25px 15px; border-radius: 22px; text-align: center;
-            position: relative; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer; border: 1px solid rgba(255,255,255,0.3);
+            background: white; padding: 25px 15px; border-radius: 24px;
+            text-align: center; position: relative; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.02);
         }
-        .card:hover { transform: translateY(-10px) scale(1.02); background: white; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .card img { width: 48px; height: 48px; border-radius: 12px; margin-bottom: 12px; }
-        .card span { display: block; font-weight: 600; font-size: 0.95rem; }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+        .card img { width: 48px; height: 48px; margin-bottom: 12px; border-radius: 12px; }
 
-        /* --- DELETE BUTTON --- */
-        .del-btn {
-            position: absolute; top: -10px; right: -10px; width: 30px; height: 30px;
-            background: var(--danger); color: white; border: none; border-radius: 50%;
-            cursor: pointer; display: none; align-items: center; justify-content: center;
-            font-size: 16px; box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4);
+        /* --- SETTINGS & FOOTER --- */
+        #settings-modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center;
         }
-        .card:hover .del-btn { display: flex; animation: popIn 0.3s ease; }
+        .modal-box { background: white; padding: 40px; border-radius: 28px; width: 340px; text-align: center; }
 
-        /* --- FOOTER --- */
-        footer {
-            background: rgba(255,255,255,0.4); padding: 40px 20px; text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.3); margin-top: 50px;
-        }
-        .f-links a {
-            text-decoration: none; color: var(--text); margin: 0 15px;
-            font-weight: 600; transition: 0.3s; padding: 8px 16px; border-radius: 10px;
-        }
-        .f-links a:hover { background: var(--accent); color: white; }
+        footer { padding: 60px 20px; text-align: center; background: #fff; border-top: 1px solid #f2f2f7; display:none;}
 
         /* --- ANIMATIONS --- */
-        @keyframes cardEntrance { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-        .shrink { transform: scale(0); opacity: 0; transition: 0.4s; }
+        @keyframes fadeInScreen { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUpFade { 
+            from { opacity: 0; transform: translateY(40px) scale(0.95); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
 
-        @media (max-width: 600px) { .main-input { grid-template-columns: 1fr; } }
+        .del-x {
+            position: absolute; top: -8px; right: -8px; width: 28px; height: 28px;
+            background: var(--danger); color: white; border: none; border-radius: 50%;
+            display: none; align-items: center; justify-content: center; font-size: 14px;
+        }
+        .card:hover .del-x { display: flex; }
+
+        @media (max-width: 700px) { .input-panel { grid-template-columns: 1fr; } .hero-box { width: 85%; padding: 40px 25px; } }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
-    <div class="auth-card">
-        <h1 style="margin:0 0 10px 0; font-size: 2rem;">ChromePortal</h1>
-        <p style="color:#666; margin-bottom: 30px;">Your Workspace, Redefined.</p>
-        <button class="auth-btn google-btn" onclick="loginG()">Google Login</button>
-        <input type="email" id="email" placeholder="Email" style="width:100%; box-sizing:border-box;">
-        <input type="password" id="pass" placeholder="Password" style="width:100%; box-sizing:border-box;">
-        <button class="auth-btn email-btn" onclick="loginE()">Sign In / Up</button>
-        <button class="auth-btn" style="background:none; color:#888; text-decoration:underline;" onclick="guest()">Guest Mode</button>
+    <div class="hero-box">
+        <img src="https://mohakdev1220.github.io/chromeportal/logo.png" alt="Logo">
+        <h1>Welcome back</h1>
+        <p style="color: #6e6e73; margin-bottom: 30px; font-weight: 500;">Log in to your ChromePortal to continue</p>
+        
+        <button class="auth-btn google-btn" onclick="loginG()">Continue with Google</button>
+        
+        <div class="email-input-group">
+            <input type="email" id="email" placeholder="Email address">
+            <input type="password" id="pass" placeholder="Password">
+            <button class="auth-btn email-btn" onclick="loginE()">Continue</button>
+        </div>
+        
+        <button class="guest-btn" onclick="guestMode()">Try as Guest (Local Save)</button>
     </div>
 </div>
 
+<header id="main-header" style="display:none;">
+    <a href="https://mohakdev1220.github.io/chromeportal/index.html" class="logo-area">
+        <img src="https://mohakdev1220.github.io/chromeportal/logo.png" alt="Logo">
+        <h1>ChromePortal</h1>
+    </a>
+    <div style="display:flex; align-items:center;">
+        <button id="set-icon" onclick="openSettings()" style="background:none; border:none; cursor:pointer; font-size: 1.4rem; opacity: 0.6;">⚙️</button>
+        <button id="logout-btn" onclick="logout()" style="background: #000; color:#fff; border:none; padding:10px 20px; border-radius:12px; cursor:pointer; font-weight:700; margin-left:15px;">Logout</button>
+    </div>
+</header>
+
 <div id="dashboard">
-    <div class="nav-bar">
-        <h2 style="font-size: 1.8rem; letter-spacing: -1px;">My Space</h2>
-        <div>
-            <button onclick="openSettings()" style="padding:10px; border-radius:10px; border:none; cursor:pointer; background:white;">⚙️</button>
-            <button onclick="logout()" style="padding:10px 20px; border-radius:10px; border:none; cursor:pointer; background:var(--text); color:white; margin-left:10px;">Logout</button>
-        </div>
+    <div class="input-panel">
+        <input type="text" id="site-name" placeholder="Shortcut Name">
+        <input type="text" id="site-url" placeholder="URL (google.com)">
+        <button onclick="addLink()" style="background:var(--primary); color:white; border:none; padding:0 30px; border-radius:12px; cursor:pointer; font-weight:800;">Add</button>
     </div>
-
-    <div class="main-input">
-        <input type="text" id="name" placeholder="Name">
-        <input type="text" id="url" placeholder="URL (google.com)">
-        <button onclick="addLink()" style="background:var(--accent); color:white; border:none; padding:0 30px; border-radius:12px; cursor:pointer; font-weight:700;">Add</button>
-    </div>
-
     <div class="grid" id="grid"></div>
 </div>
 
-<footer id="footer" style="display:none;">
-    <p style="color:#777; font-size: 0.9rem;">Created on 21 Feb 2026</p>
-    <div class="f-links">
-        <a href="https://mohakdev1220.github.io/toolify">🛠️ Toolify</a>
-        <a href="https://mohakdev1220.github.io/facts">💡 Facts</a>
-        <a href="https://www.youtube.com/@MOHAKCHOUBEY" style="color:#d63031;">🎬 YouTube</a>
+<div id="settings-modal">
+    <div class="modal-box">
+        <h2 style="letter-spacing:-1px;">Portal Settings</h2>
+        <p id="user-email" style="color: #8e8e93; margin-bottom: 25px;"></p>
+        <button class="auth-btn email-btn" onclick="closeSettings()">Cancel</button>
+        <button class="auth-btn" style="background:var(--danger); color:white;" onclick="deleteAccount()">Delete Data & Account</button>
+    </div>
+</div>
+
+<footer id="footer">
+    <p style="color:#8e8e93; font-weight: 600; font-size: 0.9rem;">Created on 21 Feb 2026</p>
+    <div style="display:flex; justify-content:center; gap:25px; margin-top:15px;">
+        <a href="https://mohakdev1220.github.io/toolify" style="text-decoration:none; color:var(--primary); font-weight:700;">Toolify</a>
+        <a href="https://mohakdev1220.github.io/facts" style="text-decoration:none; color:var(--primary); font-weight:700;">Facts</a>
+        <a href="https://www.youtube.com/@MOHAKCHOUBEY" style="text-decoration:none; color:#ff0000; font-weight:700;">YouTube</a>
     </div>
 </footer>
 
 <script>
-    // --- FIREBASE CONFIG ---
-    const firebaseConfig = {
-       apiKey: "AIzaSyAoj4yHcaRW4wdOPA7SrZhGQZqAobHDdB0",
+    // --- FIREBASE (REPLACE WITH YOUR KEYS) ---
+   apiKey: "AIzaSyAoj4yHcaRW4wdOPA7SrZhGQZqAobHDdB0",
   authDomain: "toolbox-hub-98c03.firebaseapp.com",
   projectId: "toolbox-hub-98c03",
   storageBucket: "toolbox-hub-98c03.firebasestorage.app",
   messagingSenderId: "321020105472",
-  appId: "1:321020105472:web:698ba3bf9dfe75add859e5"
-    };
-
+  appId: "1:321020105472:web:698ba3bf9dfe75add859e5";
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -169,65 +213,99 @@
     let links = [];
     let isGuest = false;
 
-    // --- LOGIC ---
+    // --- APP LOGIC ---
     function loginG() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
     async function loginE() {
         const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+        if(!e || !p) return;
         try { await auth.signInWithEmailAndPassword(e,p).catch(()=>auth.createUserWithEmailAndPassword(e,p)); }
         catch(err) { alert(err.message); }
     }
-    function guest() { isGuest = true; setupUI(); links = JSON.parse(localStorage.getItem('gLinks')) || []; render(); }
-    
-    auth.onAuthStateChanged(user => { if(user) { isGuest = false; setupUI(); load(); } });
 
-    function setupUI() {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        document.getElementById('footer').style.display = 'block';
+    function guestMode() {
+        isGuest = true;
+        links = JSON.parse(localStorage.getItem('portal_guest')) || [];
+        showApp();
     }
 
-    async function load() {
+    auth.onAuthStateChanged(user => {
+        if(user) { 
+            isGuest = false; 
+            showApp(); 
+            document.getElementById('user-email').innerText = user.email;
+            loadData(); 
+        }
+    });
+
+    function showApp() {
+        document.getElementById('login-screen').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-header').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('dashboard').classList.add('show-dash');
+            document.getElementById('footer').style.display = 'block';
+            if(isGuest) {
+                document.getElementById('logout-btn').innerText = "Exit Guest";
+                document.getElementById('set-icon').style.display = 'none';
+                render();
+            }
+        }, 400);
+    }
+
+    async function loadData() {
         db.collection("users").doc(auth.currentUser.uid).onSnapshot(doc => {
             links = doc.exists ? doc.data().links : [];
             render();
         });
     }
 
-    async function addLink() {
-        const n = document.getElementById('name').value; let u = document.getElementById('url').value;
+    function addLink() {
+        const n = document.getElementById('site-name').value;
+        let u = document.getElementById('site-url').value;
         if(!n || !u) return;
         if(!u.startsWith('http')) u = 'https://' + u;
         links.push({name:n, url:u, id:Date.now()});
         save();
-        document.getElementById('name').value = ''; document.getElementById('url').value = '';
+        document.getElementById('site-name').value = '';
+        document.getElementById('site-url').value = '';
     }
 
     async function save() {
         if(!isGuest) await db.collection("users").doc(auth.currentUser.uid).set({links});
-        else { localStorage.setItem('gLinks', JSON.stringify(links)); render(); }
+        else { localStorage.setItem('portal_guest', JSON.stringify(links)); render(); }
     }
 
     function render() {
         const g = document.getElementById('grid'); g.innerHTML = '';
         links.forEach(l => {
-            const d = document.createElement('div'); d.className = 'card'; d.id = `c-${l.id}`;
-            d.onclick = () => window.open(l.url, '_blank');
-            d.innerHTML = `<button class="del-btn" onclick="event.stopPropagation(); del(${l.id})">✕</button>
-                           <img src="https://www.google.com/s2/favicons?sz=64&domain=${l.url}">
-                           <span>${l.name}</span>`;
-            g.appendChild(d);
+            const card = document.createElement('div');
+            card.className = 'card'; card.id = `card-${l.id}`;
+            card.onclick = () => window.open(l.url, '_blank');
+            card.innerHTML = `<button class="del-x" onclick="event.stopPropagation(); remove(${l.id})">✕</button>
+                              <img src="https://www.google.com/s2/favicons?sz=128&domain=${l.url}" onerror="this.src='https://mohakdev1220.github.io/chromeportal/logo.png'">
+                              <span style="font-weight:700;">${l.name}</span>`;
+            g.appendChild(card);
         });
     }
 
-    function del(id) {
-        document.getElementById(`c-${id}`).classList.add('shrink');
-        setTimeout(async () => {
+    function remove(id) {
+        document.getElementById(`card-${id}`).style.transform = "scale(0)";
+        setTimeout(() => {
             links = links.filter(l => l.id !== id);
             save();
-        }, 400);
+        }, 300);
     }
 
     function logout() { auth.signOut(); location.reload(); }
+    function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
+    function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+    async function deleteAccount() {
+        if(confirm("Confirm deletion? All cloud data will be wiped.")) {
+            await db.collection("users").doc(auth.currentUser.uid).delete();
+            auth.currentUser.delete().then(()=>location.reload());
+        }
+    }
 </script>
 </body>
 </html>
