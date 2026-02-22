@@ -29,7 +29,7 @@
         #login-screen {
             position: fixed; inset: 0; z-index: 1000;
             display: flex; justify-content: center; align-items: center;
-            background: #ffffff;
+            background: #ffffff; transition: 0.5s ease;
         }
 
         .hero-box {
@@ -43,22 +43,23 @@
             margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
 
-        .hero-box h1 { font-weight: 800; font-size: 2.5rem; margin: 0; letter-spacing: -1.5px; }
+        .hero-box h1 { font-weight: 800; font-size: 2.8rem; margin: 0; letter-spacing: -1.5px; }
         .hero-box p { color: #6e6e73; font-size: 1.1rem; margin: 10px 0 40px 0; }
 
         .auth-btn {
-            width: 100%; padding: 16px; margin: 10px 0; border: none;
-            border-radius: 14px; font-weight: 700; cursor: pointer;
+            width: 100%; padding: 18px; margin: 10px 0; border: none;
+            border-radius: 16px; font-weight: 700; cursor: pointer;
             transition: 0.3s; font-size: 1.1rem;
         }
 
-        .google-btn { background: #000; color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .google-btn:hover { background: #333; transform: scale(1.02); }
+        .google-btn { background: #000; color: #fff; }
+        .google-btn:hover { background: #333; transform: translateY(-2px); }
 
         .guest-btn { 
-            background: none; color: #8e8e93; text-decoration: underline; 
-            margin-top: 20px; cursor: pointer; border:none; font-size: 0.9rem;
+            background: #f2f2f7; color: #1d1d1f; 
+            margin-top: 10px; border:none;
         }
+        .guest-btn:hover { background: #e5e5ea; }
 
         /* --- DASHBOARD --- */
         header {
@@ -98,10 +99,9 @@
             text-align: center; position: relative; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
             border: 1px solid #f5f5f7;
-            animation: pop 0.4s ease;
         }
         .card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.06); border-color: var(--primary); }
-        .card img { width: 48px; height: 48px; margin-bottom: 12px; border-radius: 12px; }
+        .card img { width: 52px; height: 52px; margin-bottom: 12px; border-radius: 12px; }
 
         .del-x {
             position: absolute; top: -5px; right: -5px; width: 26px; height: 26px;
@@ -111,18 +111,11 @@
         }
         .card:hover .del-x { display: flex; }
 
-        /* --- MODAL & FOOTER --- */
-        #settings-modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px); z-index: 2000; justify-content: center; align-items: center;
-        }
-        .modal-box { background: white; padding: 40px; border-radius: 30px; width: 320px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.15); }
-
+        /* --- FOOTER --- */
         footer { padding: 50px; text-align: center; background: #fff; border-top: 1px solid #f2f2f7; display:none; }
         .f-link { color: var(--primary); text-decoration: none; font-weight: 700; margin: 0 15px; }
 
         @keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
-        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -131,9 +124,9 @@
     <div class="hero-box">
         <img src="https://mohakdev1220.github.io/chromeportal/logo.png" alt="Logo">
         <h1>ChromePortal</h1>
-        <p>Access your world in one click.</p>
+        <p>Save your world, one link at a time.</p>
         <button class="google-btn auth-btn" onclick="loginG()">Continue with Google</button>
-        <button class="guest-btn" onclick="guestMode()">Stay logged out (Data will not be saved)</button>
+        <button class="guest-btn auth-btn" onclick="guestMode()">Try Guest Mode (Saves Locally)</button>
     </div>
 </div>
 
@@ -152,18 +145,9 @@
     <div class="input-panel">
         <input type="text" id="site-name" placeholder="Name">
         <input type="text" id="site-url" placeholder="URL (google.com)">
-        <button class="add-btn" onclick="addLink()">Add Shortcut</button>
+        <button class="add-btn" onclick="addLink()">Create</button>
     </div>
     <div class="grid" id="grid"></div>
-</div>
-
-<div id="settings-modal">
-    <div class="modal-box">
-        <h2>Settings</h2>
-        <p id="user-email" style="color:#8e8e93; margin-bottom:30px;"></p>
-        <button class="auth-btn" style="background:#f2f2f7; color:#000;" onclick="closeSettings()">Cancel</button>
-        <button class="auth-btn" style="background:var(--danger); color:#fff;" onclick="deleteAccount()">Delete Account</button>
-    </div>
 </div>
 
 <footer id="footer">
@@ -176,18 +160,13 @@
 </footer>
 
 <script>
-    // --- FIREBASE CONFIG ---
-    const firebaseConfig = {  apiKey: "AIzaSyAoj4yHcaRW4wdOPA7SrZhGQZqAobHDdB0",
-
-  authDomain: "toolbox-hub-98c03.firebaseapp.com",
-
-  projectId: "toolbox-hub-98c03",
-
-  storageBucket: "toolbox-hub-98c03.firebasestorage.app",
-
-  messagingSenderId: "321020105472",
-
-  appId: "1:321020105472:web:698ba3bf9dfe75add859e5"; };
+    // --- FIREBASE CONFIG (Add yours) ---
+    const firebaseConfig = { apiKey: "AIzaSyAoj4yHcaRW4wdOPA7SrZhGQZqAobHDdB0",
+authDomain: "toolbox-hub-98c03.firebaseapp.com",
+ projectId: "toolbox-hub-98c03",
+storageBucket: "toolbox-hub-98c03.firebasestorage.app",
+ messagingSenderId: "321020105472",
+appId: "1:321020105472:web:698ba3bf9dfe75add859e5"; };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -195,58 +174,78 @@
     let links = [];
     let isGuest = false;
 
-    function loginG() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+    // --- GOOGLE LOGIN ---
+    function loginG() { 
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider).catch(err => alert(err.message));
+    }
 
+    // --- GUEST MODE (LocalStorage Fix) ---
     function guestMode() {
         isGuest = true;
-        links = JSON.parse(localStorage.getItem('portal_local')) || [];
+        const saved = localStorage.getItem('portal_guest_data');
+        links = saved ? JSON.parse(saved) : [];
         showApp();
     }
 
+    // --- AUTH STATE ---
     auth.onAuthStateChanged(user => {
         if(user) { 
             isGuest = false; 
             showApp(); 
-            document.getElementById('user-email').innerText = user.email;
-            loadData(); 
+            loadCloudData(); 
         }
     });
 
     function showApp() {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('main-header').style.display = 'flex';
-        document.getElementById('dashboard').style.display = 'block';
-        document.getElementById('footer').style.display = 'block';
-        if(isGuest) {
-            document.getElementById('logout-btn').innerText = "Exit Guest";
-            document.getElementById('set-icon').style.display = 'none';
+        document.getElementById('login-screen').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-header').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('footer').style.display = 'block';
+            if(isGuest) {
+                document.getElementById('logout-btn').innerText = "Exit Guest";
+                document.getElementById('set-icon').style.display = 'none';
+            }
             render();
-        }
+        }, 300);
     }
 
-    async function loadData() {
+    // --- CLOUD LOAD ---
+    async function loadCloudData() {
         db.collection("users").doc(auth.currentUser.uid).onSnapshot(doc => {
-            links = doc.exists ? doc.data().links : [];
-            render();
+            if(doc.exists) {
+                links = doc.data().links || [];
+                render();
+            }
         });
     }
 
+    // --- ADD SHORTCUT ---
     function addLink() {
         const n = document.getElementById('site-name').value;
         let u = document.getElementById('site-url').value;
         if(!n || !u) return;
         if(!u.startsWith('http')) u = 'https://' + u;
+        
         links.push({name:n, url:u, id:Date.now()});
-        save();
+        saveData();
         document.getElementById('site-name').value = '';
         document.getElementById('site-url').value = '';
     }
 
-    async function save() {
-        if(!isGuest) await db.collection("users").doc(auth.currentUser.uid).set({links});
-        else { localStorage.setItem('portal_local', JSON.stringify(links)); render(); }
+    // --- SAVE DATA (Logic for Guest & Cloud) ---
+    async function saveData() {
+        if(isGuest) {
+            localStorage.setItem('portal_guest_data', JSON.stringify(links));
+            render();
+        } else if(auth.currentUser) {
+            await db.collection("users").doc(auth.currentUser.uid).set({links});
+        }
     }
 
+    // --- RENDER CARDS ---
     function render() {
         const g = document.getElementById('grid'); g.innerHTML = '';
         links.forEach(l => {
@@ -260,22 +259,19 @@
         });
     }
 
+    // --- REMOVE ---
     function remove(id) {
-        document.getElementById(`c-${id}`).style.transform = "scale(0.5)";
-        document.getElementById(`c-${id}`).style.opacity = "0";
-        setTimeout(() => {
-            links = links.filter(l => l.id !== id);
-            save();
-        }, 300);
+        links = links.filter(l => l.id !== id);
+        saveData();
     }
 
+    // --- UTILS ---
     function logout() { auth.signOut(); location.reload(); }
-    function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
-    function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
-    async function deleteAccount() {
-        if(confirm("Confirm? Everything will be deleted.")) {
-            await db.collection("users").doc(auth.currentUser.uid).delete();
-            auth.currentUser.delete().then(()=>location.reload());
+    function openSettings() {
+        if(confirm("DANGER: Delete all cloud shortcuts?")) {
+            db.collection("users").doc(auth.currentUser.uid).delete().then(() => {
+                auth.currentUser.delete().then(() => location.reload());
+            });
         }
     }
 </script>
