@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <meta name="google-site-verification" content="xrZFu5cpuycZgitIQWcRT0DmD7er9zSVNmzWktTYs10" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
+    
     <title>ChromePortal | Full Click</title> 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌀</text></svg>">
     
@@ -32,7 +34,7 @@
             width: 100%; 
             max-width: 900px; 
             padding: 20px;
-            flex: 1; /* Pushes footer to bottom */
+            flex: 1;
         }
 
         header { text-align: center; margin-bottom: 30px; }
@@ -51,7 +53,13 @@
             box-shadow: var(--shadow);
         }
 
+        .api-panel {
+            background: #2d3436; color: white; padding: 10px 20px; border-radius: 10px;
+            margin-bottom: 20px; display: flex; gap: 10px; align-items: center;
+        }
+
         input { padding: 12px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
+        .api-panel input { flex: 1; background: #3d4446; border: none; color: white; }
 
         .add-btn {
             background: var(--accent); color: white; border: none; padding: 12px 25px;
@@ -82,15 +90,9 @@
         .link-card:hover .delete-btn { display: block; }
 
         .site-footer {
-            flex-shrink: 0;
-            padding: 25px;
-            text-align: center;
-            color: #636e72;
-            font-size: 0.9rem;
-            width: 100%;
-            font-weight: 500;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            letter-spacing: 1px;
+            flex-shrink: 0; padding: 25px; text-align: center;
+            color: #636e72; font-size: 0.9rem; width: 100%;
+            font-weight: 500; border-top: 1px solid rgba(0,0,0,0.05);
             background: rgba(255,255,255,0.2);
         }
 
@@ -104,8 +106,14 @@
 <div class="container">
     <header>
         <h1>ChromePortal</h1>
-        <p>Persistent Shortcut Dashboard</p>
+        <p>Private Shortcut Dashboard</p>
     </header>
+
+    <div class="api-panel">
+        <span>🔑 API Key:</span>
+        <input type="password" id="apiKey" placeholder="Stored in local browser only...">
+        <button class="add-btn" style="padding: 5px 15px;" onclick="saveApiKey()">Save</button>
+    </div>
 
     <div class="search-container">
         <input type="text" id="searchBar" placeholder="Search saved links..." oninput="filterLinks()">
@@ -125,9 +133,19 @@
 </footer> 
 
 <script>
+    // Load links and API key from LocalStorage
     let allLinks = JSON.parse(localStorage.getItem('chromePortalLinks')) || [];
+    
+    window.onload = function() {
+        document.getElementById('apiKey').value = localStorage.getItem('user_google_api_key') || '';
+        displayLinks(); 
+    };
 
-    window.onload = function() { displayLinks(); };
+    function saveApiKey() {
+        const key = document.getElementById('apiKey').value;
+        localStorage.setItem('user_google_api_key', key);
+        alert("API Key saved to your browser's local memory!");
+    }
 
     function addLink() {
         const nameInput = document.getElementById('siteName');
@@ -153,23 +171,32 @@
 
     function displayLinks(data = allLinks) {
         const grid = document.getElementById('linkGrid');
-        grid.innerHTML = '';
+        grid.innerHTML = ''; // Clear grid
 
         data.forEach(link => {
+            // SECURITY: Using DOM methods instead of .innerHTML to prevent XSS
             const card = document.createElement('div');
             card.className = 'link-card';
-            card.onclick = function(e) {
-                if (e.target.classList.contains('delete-btn')) return;
-                window.open(link.url, '_blank');
-            };
-
-            const icon = `https://www.google.com/s2/favicons?sz=64&domain=${link.url}`;
             
-            card.innerHTML = `
-                <button class="delete-btn" onclick="event.stopPropagation(); deleteLink(${link.id})">✕</button>
-                <img src="${icon}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1243/1243933.png'">
-                <a href="${link.url}" onclick="event.preventDefault()">${link.name}</a>
-            `;
+            const delBtn = document.createElement('button');
+            delBtn.className = 'delete-btn';
+            delBtn.textContent = '✕';
+            delBtn.onclick = (e) => { e.stopPropagation(); deleteLink(link.id); };
+
+            const img = document.createElement('img');
+            // Using Google's favicon service safely
+            img.src = `https://www.google.com/s2/favicons?sz=64&domain=${link.url}`;
+            img.onerror = () => img.src = 'https://cdn-icons-png.flaticon.com/512/1243/1243933.png';
+
+            const a = document.createElement('a');
+            a.textContent = link.name;
+            a.href = link.url;
+
+            card.onclick = () => window.open(link.url, '_blank', 'noopener,noreferrer');
+
+            card.appendChild(delBtn);
+            card.appendChild(img);
+            card.appendChild(a);
             grid.appendChild(card);
         });
     }
