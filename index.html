@@ -160,13 +160,16 @@
 </footer>
 
 <script>
-    // --- FIREBASE CONFIG (Add yours) ---
-    const firebaseConfig = { apiKey: "AIzaSyAoj4yHcaRW4wdOPA7SrZhGQZqAobHDdB0",
-authDomain: "toolbox-hub-98c03.firebaseapp.com",
- projectId: "toolbox-hub-98c03",
-storageBucket: "toolbox-hub-98c03.firebasestorage.app",
- messagingSenderId: "321020105472",
-appId: "1:321020105472:web:698ba3bf9dfe75add859e5"; };
+    // --- FIREBASE CONFIG (Fixed Syntax) ---
+    const firebaseConfig = { 
+        apiKey: "AIzaSyAoj4yHcaRW4wdOPA7SrZhGQZqAobHDdB0",
+        authDomain: "toolbox-hub-98c03.firebaseapp.com",
+        projectId: "toolbox-hub-98c03",
+        storageBucket: "toolbox-hub-98c03.firebasestorage.app",
+        messagingSenderId: "321020105472",
+        appId: "1:321020105472:web:698ba3bf9dfe75add859e5" // Removed semicolon here
+    };
+    
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -177,15 +180,19 @@ appId: "1:321020105472:web:698ba3bf9dfe75add859e5"; };
     // --- GOOGLE LOGIN ---
     function loginG() { 
         const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider).catch(err => alert(err.message));
+        auth.signInWithPopup(provider).catch(err => {
+            console.error(err);
+            alert("Google Sign-in Error: " + err.message);
+        });
     }
 
-    // --- GUEST MODE (LocalStorage Fix) ---
+    // --- GUEST MODE ---
     function guestMode() {
         isGuest = true;
         const saved = localStorage.getItem('portal_guest_data');
         links = saved ? JSON.parse(saved) : [];
         showApp();
+        render(); // Ensure it renders immediately
     }
 
     // --- AUTH STATE ---
@@ -204,16 +211,20 @@ appId: "1:321020105472:web:698ba3bf9dfe75add859e5"; };
             document.getElementById('main-header').style.display = 'flex';
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('footer').style.display = 'block';
+            
             if(isGuest) {
                 document.getElementById('logout-btn').innerText = "Exit Guest";
                 document.getElementById('set-icon').style.display = 'none';
+            } else {
+                document.getElementById('logout-btn').innerText = "Logout";
+                document.getElementById('set-icon').style.display = 'block';
             }
-            render();
         }, 300);
     }
 
     // --- CLOUD LOAD ---
     async function loadCloudData() {
+        if (!auth.currentUser) return;
         db.collection("users").doc(auth.currentUser.uid).onSnapshot(doc => {
             if(doc.exists) {
                 links = doc.data().links || [];
@@ -224,56 +235,72 @@ appId: "1:321020105472:web:698ba3bf9dfe75add859e5"; };
 
     // --- ADD SHORTCUT ---
     function addLink() {
-        const n = document.getElementById('site-name').value;
-        let u = document.getElementById('site-url').value;
+        const n = document.getElementById('site-name').value.trim();
+        let u = document.getElementById('site-url').value.trim();
+        
         if(!n || !u) return;
         if(!u.startsWith('http')) u = 'https://' + u;
         
-        links.push({name:n, url:u, id:Date.now()});
+        links.push({name: n, url: u, id: Date.now()});
         saveData();
+        
         document.getElementById('site-name').value = '';
         document.getElementById('site-url').value = '';
     }
 
-    // --- SAVE DATA (Logic for Guest & Cloud) ---
+    // --- SAVE DATA ---
     async function saveData() {
         if(isGuest) {
             localStorage.setItem('portal_guest_data', JSON.stringify(links));
-            render();
+            render(); // Refresh UI for guest
         } else if(auth.currentUser) {
-            await db.collection("users").doc(auth.currentUser.uid).set({links});
+            try {
+                await db.collection("users").doc(auth.currentUser.uid).set({links});
+            } catch (err) {
+                console.error("Firestore Save Error:", err);
+            }
         }
     }
 
     // --- RENDER CARDS ---
     function render() {
-        const g = document.getElementById('grid'); g.innerHTML = '';
+        const g = document.getElementById('grid'); 
+        g.innerHTML = '';
         links.forEach(l => {
             const card = document.createElement('div');
-            card.className = 'card'; card.id = `c-${l.id}`;
+            card.className = 'card';
+            // Use an anonymous function to prevent immediate execution
             card.onclick = () => window.open(l.url, '_blank');
-            card.innerHTML = `<button class="del-x" onclick="event.stopPropagation(); remove(${l.id})">✕</button>
-                              <img src="https://www.google.com/s2/favicons?sz=128&domain=${l.url}" onerror="this.src='https://mohakdev1220.github.io/chromeportal/logo.png'">
-                              <span style="font-weight:700;">${l.name}</span>`;
+            
+            card.innerHTML = `
+                <button class="del-x" onclick="event.stopPropagation(); remove(${l.id})">✕</button>
+                <img src="https://www.google.com/s2/favicons?sz=128&domain=${l.url}" 
+                     onerror="this.src='https://mohakdev1220.github.io/chromeportal/logo.png'">
+                <div style="font-weight:700; margin-top:5px;">${l.name}</div>`;
             g.appendChild(card);
         });
     }
 
-    // --- REMOVE ---
     function remove(id) {
         links = links.filter(l => l.id !== id);
         saveData();
     }
 
-    // --- UTILS ---
-    function logout() { auth.signOut(); location.reload(); }
+    function logout() { 
+        auth.signOut().then(() => {
+            location.reload(); 
+        });
+    }
+
     function openSettings() {
         if(confirm("DANGER: Delete all cloud shortcuts?")) {
             db.collection("users").doc(auth.currentUser.uid).delete().then(() => {
-                auth.currentUser.delete().then(() => location.reload());
+                alert("Data cleared.");
+                location.reload();
             });
         }
     }
 </script>
+
 </body>
 </html>
