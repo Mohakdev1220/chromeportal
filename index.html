@@ -13,131 +13,116 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
 
         :root {
-            --bg: #f4f9ff;
+            --bg: #f8fbff;
             --primary: #007aff;
             --text: #1d1d1f;
             --danger: #ff3b30;
         }
 
         body {
-            margin: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #ffffff; /* ChatGPT starts clean white */
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
+            margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #ffffff; color: var(--text); min-height: 100vh;
+            display: flex; flex-direction: column; overflow-x: hidden;
         }
 
-        /* --- CHATGPT STYLE INTRO SCREEN --- */
+        /* --- CHATGPT STYLE ENTRANCE --- */
         #login-screen {
             position: fixed; inset: 0; z-index: 1000;
             display: flex; justify-content: center; align-items: center;
-            background: radial-gradient(circle at center, #ffffff 0%, #eef6ff 100%);
-            animation: fadeInScreen 1s ease-out forwards;
+            background: #ffffff;
         }
 
         .hero-box {
-            background: #ffffff; 
-            padding: 60px 50px; 
-            border-radius: 32px;
-            width: 420px; 
-            text-align: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-            opacity: 0;
-            transform: translateY(30px);
-            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+            text-align: center; width: 400px; padding: 40px;
+            opacity: 0; transform: translateY(20px);
+            animation: slideUpFade 0.8s ease forwards 0.3s;
         }
 
         .hero-box img { 
-            width: 90px; height: 90px; 
-            border-radius: 22px; 
-            margin-bottom: 25px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            width: 100px; height: 100px; border-radius: 24px; 
+            margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
 
-        .hero-box h1 { 
-            font-weight: 800; font-size: 2.4rem; 
-            margin: 0 0 10px 0; letter-spacing: -1px;
-        }
+        .hero-box h1 { font-weight: 800; font-size: 2.5rem; margin: 0; letter-spacing: -1.5px; }
+        .hero-box p { color: #6e6e73; font-size: 1.1rem; margin: 10px 0 40px 0; }
 
         .auth-btn {
             width: 100%; padding: 16px; margin: 10px 0; border: none;
             border-radius: 14px; font-weight: 700; cursor: pointer;
-            transition: all 0.3s ease; font-size: 1rem;
+            transition: 0.3s; font-size: 1.1rem;
         }
 
-        .google-btn { background: #000; color: #fff; }
+        .google-btn { background: #000; color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .google-btn:hover { background: #333; transform: scale(1.02); }
 
-        .email-input-group { margin-top: 20px; text-align: left; }
-        
-        input {
-            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px;
-            border: 1px solid #e5e5e5; font-size: 1rem; outline: none;
-            box-sizing: border-box; transition: 0.3s;
+        .guest-btn { 
+            background: none; color: #8e8e93; text-decoration: underline; 
+            margin-top: 20px; cursor: pointer; border:none; font-size: 0.9rem;
         }
-        input:focus { border-color: var(--primary); background: #f9f9f9; }
 
-        .email-btn { background: #f2f2f7; color: #000; }
-        .email-btn:hover { background: #e5e5ea; }
-
-        .guest-btn { background: none; color: #8e8e93; text-decoration: underline; margin-top: 15px; cursor: pointer; border:none; width: 100%;}
-
-        /* --- DASHBOARD UI --- */
+        /* --- DASHBOARD --- */
         header {
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px);
-            padding: 18px 8%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
+            padding: 15px 8%; display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .logo-area img { width: 42px; height: 42px; border-radius: 10px; }
-        .logo-area h1 { font-size: 1.5rem; margin: 0; color: #000; font-weight: 800; letter-spacing: -0.5px; }
+        .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .logo-area img { width: 40px; height: 40px; border-radius: 10px; }
+        .logo-area h1 { font-size: 1.4rem; margin: 0; font-weight: 800; }
 
-        #dashboard { display: none; width: 90%; max-width: 1000px; margin: 60px auto; flex: 1; opacity: 0; }
-        .show-dash { animation: fadeInScreen 0.8s ease forwards; }
-
+        #dashboard { display: none; width: 90%; max-width: 1000px; margin: 50px auto; flex: 1; }
+        
         .input-panel {
-            background: white; padding: 25px; border-radius: 24px;
+            background: #fff; padding: 25px; border-radius: 24px;
             display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.03); margin-bottom: 50px;
+            border: 1px solid #f0f0f0;
+        }
+
+        input {
+            padding: 15px; border-radius: 12px; border: 1px solid #e5e5e5;
+            font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); }
+
+        .add-btn { 
+            background: var(--primary); color: white; border: none; 
+            padding: 0 30px; border-radius: 12px; cursor: pointer; font-weight: 800; 
         }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 25px; }
+        
         .card {
-            background: white; padding: 25px 15px; border-radius: 24px;
+            background: white; padding: 30px 15px; border-radius: 24px;
             text-align: center; position: relative; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid #f5f5f7;
+            animation: pop 0.4s ease;
         }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.06); border-color: var(--primary); }
         .card img { width: 48px; height: 48px; margin-bottom: 12px; border-radius: 12px; }
 
-        /* --- SETTINGS & FOOTER --- */
-        #settings-modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2);
-            backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center;
-        }
-        .modal-box { background: white; padding: 40px; border-radius: 28px; width: 340px; text-align: center; }
-
-        footer { padding: 60px 20px; text-align: center; background: #fff; border-top: 1px solid #f2f2f7; display:none;}
-
-        /* --- ANIMATIONS --- */
-        @keyframes fadeInScreen { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUpFade { 
-            from { opacity: 0; transform: translateY(40px) scale(0.95); } 
-            to { opacity: 1; transform: translateY(0) scale(1); } 
-        }
-
         .del-x {
-            position: absolute; top: -8px; right: -8px; width: 28px; height: 28px;
+            position: absolute; top: -5px; right: -5px; width: 26px; height: 26px;
             background: var(--danger); color: white; border: none; border-radius: 50%;
-            display: none; align-items: center; justify-content: center; font-size: 14px;
+            display: none; align-items: center; justify-content: center; font-size: 12px;
+            box-shadow: 0 4px 10px rgba(255,59,48,0.3);
         }
         .card:hover .del-x { display: flex; }
 
-        @media (max-width: 700px) { .input-panel { grid-template-columns: 1fr; } .hero-box { width: 85%; padding: 40px 25px; } }
+        /* --- MODAL & FOOTER --- */
+        #settings-modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px); z-index: 2000; justify-content: center; align-items: center;
+        }
+        .modal-box { background: white; padding: 40px; border-radius: 30px; width: 320px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.15); }
+
+        footer { padding: 50px; text-align: center; background: #fff; border-top: 1px solid #f2f2f7; display:none; }
+        .f-link { color: var(--primary); text-decoration: none; font-weight: 700; margin: 0 15px; }
+
+        @keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
+        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -145,18 +130,10 @@
 <div id="login-screen">
     <div class="hero-box">
         <img src="https://mohakdev1220.github.io/chromeportal/logo.png" alt="Logo">
-        <h1>Welcome back</h1>
-        <p style="color: #6e6e73; margin-bottom: 30px; font-weight: 500;">Log in to your ChromePortal to continue</p>
-        
-        <button class="auth-btn google-btn" onclick="loginG()">Continue with Google</button>
-        
-        <div class="email-input-group">
-            <input type="email" id="email" placeholder="Email address">
-            <input type="password" id="pass" placeholder="Password">
-            <button class="auth-btn email-btn" onclick="loginE()">Continue</button>
-        </div>
-        
-        <button class="guest-btn" onclick="guestMode()">Try as Guest (Local Save)</button>
+        <h1>ChromePortal</h1>
+        <p>Access your world in one click.</p>
+        <button class="google-btn auth-btn" onclick="loginG()">Continue with Google</button>
+        <button class="guest-btn" onclick="guestMode()">Stay logged out (Data will not be saved)</button>
     </div>
 </div>
 
@@ -166,46 +143,51 @@
         <h1>ChromePortal</h1>
     </a>
     <div style="display:flex; align-items:center;">
-        <button id="set-icon" onclick="openSettings()" style="background:none; border:none; cursor:pointer; font-size: 1.4rem; opacity: 0.6;">⚙️</button>
+        <button id="set-icon" onclick="openSettings()" style="background:none; border:none; cursor:pointer; font-size: 1.4rem;">⚙️</button>
         <button id="logout-btn" onclick="logout()" style="background: #000; color:#fff; border:none; padding:10px 20px; border-radius:12px; cursor:pointer; font-weight:700; margin-left:15px;">Logout</button>
     </div>
 </header>
 
 <div id="dashboard">
     <div class="input-panel">
-        <input type="text" id="site-name" placeholder="Shortcut Name">
+        <input type="text" id="site-name" placeholder="Name">
         <input type="text" id="site-url" placeholder="URL (google.com)">
-        <button onclick="addLink()" style="background:var(--primary); color:white; border:none; padding:0 30px; border-radius:12px; cursor:pointer; font-weight:800;">Add</button>
+        <button class="add-btn" onclick="addLink()">Add Shortcut</button>
     </div>
     <div class="grid" id="grid"></div>
 </div>
 
 <div id="settings-modal">
     <div class="modal-box">
-        <h2 style="letter-spacing:-1px;">Portal Settings</h2>
-        <p id="user-email" style="color: #8e8e93; margin-bottom: 25px;"></p>
-        <button class="auth-btn email-btn" onclick="closeSettings()">Cancel</button>
-        <button class="auth-btn" style="background:var(--danger); color:white;" onclick="deleteAccount()">Delete Data & Account</button>
+        <h2>Settings</h2>
+        <p id="user-email" style="color:#8e8e93; margin-bottom:30px;"></p>
+        <button class="auth-btn" style="background:#f2f2f7; color:#000;" onclick="closeSettings()">Cancel</button>
+        <button class="auth-btn" style="background:var(--danger); color:#fff;" onclick="deleteAccount()">Delete Account</button>
     </div>
 </div>
 
 <footer id="footer">
-    <p style="color:#8e8e93; font-weight: 600; font-size: 0.9rem;">Created on 21 Feb 2026</p>
-    <div style="display:flex; justify-content:center; gap:25px; margin-top:15px;">
-        <a href="https://mohakdev1220.github.io/toolify" style="text-decoration:none; color:var(--primary); font-weight:700;">Toolify</a>
-        <a href="https://mohakdev1220.github.io/facts" style="text-decoration:none; color:var(--primary); font-weight:700;">Facts</a>
-        <a href="https://www.youtube.com/@MOHAKCHOUBEY" style="text-decoration:none; color:#ff0000; font-weight:700;">YouTube</a>
+    <p style="color:#8e8e93; font-weight: 600;">Created on 21 Feb 2026</p>
+    <div style="margin-top:15px;">
+        <a href="https://mohakdev1220.github.io/toolify" class="f-link">Toolify</a>
+        <a href="https://mohakdev1220.github.io/facts" class="f-link">Facts</a>
+        <a href="https://www.youtube.com/@MOHAKCHOUBEY" class="f-link" style="color:#ff0000;">YouTube</a>
     </div>
 </footer>
 
 <script>
-    // --- FIREBASE (REPLACE WITH YOUR KEYS) ---
-   apiKey: "AIzaSyAoj4yHcaRW4wdOPA7SrZhGQZqAobHDdB0",
+    // --- FIREBASE CONFIG ---
+    const firebaseConfig = {  apiKey: "AIzaSyAoj4yHcaRW4wdOPA7SrZhGQZqAobHDdB0",
+
   authDomain: "toolbox-hub-98c03.firebaseapp.com",
+
   projectId: "toolbox-hub-98c03",
+
   storageBucket: "toolbox-hub-98c03.firebasestorage.app",
+
   messagingSenderId: "321020105472",
-  appId: "1:321020105472:web:698ba3bf9dfe75add859e5";
+
+  appId: "1:321020105472:web:698ba3bf9dfe75add859e5"; };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -213,18 +195,11 @@
     let links = [];
     let isGuest = false;
 
-    // --- APP LOGIC ---
     function loginG() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
-    async function loginE() {
-        const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-        if(!e || !p) return;
-        try { await auth.signInWithEmailAndPassword(e,p).catch(()=>auth.createUserWithEmailAndPassword(e,p)); }
-        catch(err) { alert(err.message); }
-    }
 
     function guestMode() {
         isGuest = true;
-        links = JSON.parse(localStorage.getItem('portal_guest')) || [];
+        links = JSON.parse(localStorage.getItem('portal_local')) || [];
         showApp();
     }
 
@@ -238,19 +213,15 @@
     });
 
     function showApp() {
-        document.getElementById('login-screen').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-header').style.display = 'flex';
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('dashboard').classList.add('show-dash');
-            document.getElementById('footer').style.display = 'block';
-            if(isGuest) {
-                document.getElementById('logout-btn').innerText = "Exit Guest";
-                document.getElementById('set-icon').style.display = 'none';
-                render();
-            }
-        }, 400);
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-header').style.display = 'flex';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('footer').style.display = 'block';
+        if(isGuest) {
+            document.getElementById('logout-btn').innerText = "Exit Guest";
+            document.getElementById('set-icon').style.display = 'none';
+            render();
+        }
     }
 
     async function loadData() {
@@ -273,14 +244,14 @@
 
     async function save() {
         if(!isGuest) await db.collection("users").doc(auth.currentUser.uid).set({links});
-        else { localStorage.setItem('portal_guest', JSON.stringify(links)); render(); }
+        else { localStorage.setItem('portal_local', JSON.stringify(links)); render(); }
     }
 
     function render() {
         const g = document.getElementById('grid'); g.innerHTML = '';
         links.forEach(l => {
             const card = document.createElement('div');
-            card.className = 'card'; card.id = `card-${l.id}`;
+            card.className = 'card'; card.id = `c-${l.id}`;
             card.onclick = () => window.open(l.url, '_blank');
             card.innerHTML = `<button class="del-x" onclick="event.stopPropagation(); remove(${l.id})">✕</button>
                               <img src="https://www.google.com/s2/favicons?sz=128&domain=${l.url}" onerror="this.src='https://mohakdev1220.github.io/chromeportal/logo.png'">
@@ -290,7 +261,8 @@
     }
 
     function remove(id) {
-        document.getElementById(`card-${id}`).style.transform = "scale(0)";
+        document.getElementById(`c-${id}`).style.transform = "scale(0.5)";
+        document.getElementById(`c-${id}`).style.opacity = "0";
         setTimeout(() => {
             links = links.filter(l => l.id !== id);
             save();
@@ -301,7 +273,7 @@
     function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
     function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
     async function deleteAccount() {
-        if(confirm("Confirm deletion? All cloud data will be wiped.")) {
+        if(confirm("Confirm? Everything will be deleted.")) {
             await db.collection("users").doc(auth.currentUser.uid).delete();
             auth.currentUser.delete().then(()=>location.reload());
         }
