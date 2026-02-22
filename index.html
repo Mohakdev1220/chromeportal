@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>ChromePortal | Pro Dashboard</title> 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌀</text></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChromePortal | Dashboard</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -12,280 +11,300 @@
 
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --text-main: #2d3436;
+            --primary: #2d3436;
             --accent: #0984e3;
-            --danger: #d63031;
-            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --danger: #ff7675;
+            --bg: #f9f9f9;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            margin: 0; min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center;
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
         }
 
-        /* --- AUTH OVERLAY --- */
-        #authOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-gradient); z-index: 1000;
-            display: flex; justify-content: center; align-items: center;
+        /* --- LOGIN SCREEN --- */
+        #login-screen {
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            background: white; position: fixed; width: 100%; z-index: 1000;
         }
-        .auth-card {
-            background: white; padding: 40px; border-radius: 20px;
-            box-shadow: var(--shadow); width: 100%; max-width: 400px; text-align: center;
+        .auth-box {
+            width: 350px; text-align: center; padding: 40px;
+            border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            animation: slideUp 0.6s ease;
         }
-        .auth-card input { width: 100%; margin-bottom: 15px; box-sizing: border-box; }
+        .auth-btn {
+            width: 100%; padding: 12px; margin: 10px 0; border: none; border-radius: 8px;
+            font-weight: 600; cursor: pointer; transition: 0.3s;
+        }
+        .google-btn { background: #4285f4; color: white; border: 1px solid #4285f4; }
+        .google-btn:hover { background: #357ae8; }
+        .email-btn { background: var(--primary); color: white; }
+        .guest-btn { background: none; color: #b2bec3; font-size: 0.85rem; text-decoration: underline; margin-top: 15px; }
 
-        /* --- MAIN UI --- */
-        .container { 
-            width: 100%; max-width: 900px; padding: 20px; flex: 1; display: none; 
+        input { 
+            width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #dfe6e9; 
+            border-radius: 8px; box-sizing: border-box; outline: none; transition: 0.3s;
         }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        input:focus { border-color: var(--accent); }
+
+        /* --- DASHBOARD --- */
+        #dashboard { display: none; padding: 40px 20px; max-width: 1000px; margin: auto; flex: 1; width: 100%; box-sizing: border-box; }
+        .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         
-        .nav-buttons button {
-            background: none; border: 1px solid var(--accent); color: var(--accent);
-            padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-left: 10px;
+        .input-bar {
+            background: white; padding: 25px; border-radius: 16px;
+            display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 40px;
         }
+        .create-btn { background: var(--accent); color: white; border: none; padding: 0 30px; border-radius: 8px; cursor: pointer; font-weight: 600; }
 
-        .input-panel {
-            background: var(--card-bg); padding: 25px; border-radius: 16px;
-            display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; 
-            margin-bottom: 30px; box-shadow: var(--shadow);
-        }
-
-        input { padding: 12px; border-radius: 8px; border: 1px solid #ddd; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 5px rgba(9,132,227,0.2); }
-
-        .add-btn {
-            background: var(--accent); color: white; border: none; padding: 12px 25px;
-            border-radius: 8px; cursor: pointer; font-weight: bold;
-        }
-
-        .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        /* --- GRID & CARDS --- */
+        .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 25px; }
         .link-card {
-            background: white; border-radius: 15px; padding: 20px;
-            display: flex; flex-direction: column; align-items: center;
-            position: relative; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            cursor: pointer;
+            background: white; padding: 20px; border-radius: 18px; text-align: center;
+            position: relative; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02); cursor: pointer;
+            animation: popIn 0.5s ease forwards;
         }
-        .link-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-        .link-card img { width: 40px; height: 40px; margin-bottom: 12px; border-radius: 8px; }
-        .link-card a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+        .link-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+        .link-card img { width: 45px; height: 45px; margin-bottom: 12px; border-radius: 10px; }
+        .link-card span { display: block; font-size: 0.9rem; color: var(--primary); font-weight: 600; }
 
-        .delete-btn {
-            position: absolute; top: 10px; right: 10px; background: var(--danger);
-            color: white; border: none; width: 24px; height: 24px; border-radius: 50%;
-            cursor: pointer; display: none; font-size: 12px;
+        /* --- DELETE BUTTON (RED CROSS CIRCLE) --- */
+        .del-x {
+            position: absolute; top: -10px; right: -10px; width: 28px; height: 28px;
+            background: var(--danger); color: white; border: none; border-radius: 50%;
+            font-size: 14px; cursor: pointer; display: none; align-items: center; justify-content: center;
+            box-shadow: 0 4px 8px rgba(214, 48, 49, 0.3); z-index: 10;
         }
-        .link-card:hover .delete-btn { display: block; }
+        .link-card:hover .del-x { display: flex; }
 
-        /* --- SETTINGS MODAL --- */
-        #settingsModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;
+        /* --- FOOTER --- */
+        .site-footer {
+            margin-top: 60px; padding: 40px 20px; background: white;
+            border-top: 1px solid #eee; width: 100%; text-align: center; box-sizing: border-box;
         }
-        .settings-content {
-            background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px;
+        .footer-content p { color: #b2bec3; font-size: 0.85rem; margin-bottom: 20px; }
+        .other-sites-label { font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 15px; display: block; }
+        .footer-links { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .f-link {
+            text-decoration: none; color: var(--accent); font-size: 0.9rem; font-weight: 500;
+            padding: 8px 16px; border-radius: 25px; background: #f0f7ff; transition: 0.3s;
         }
-        .danger-zone { border-top: 2px solid #eee; margin-top: 20px; padding-top: 20px; }
-        .del-acc-btn { width: 100%; background: var(--danger); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .f-link:hover { background: var(--accent); color: white; transform: translateY(-3px); }
+        .youtube-link { background: #fff0f0; color: #d63031; }
+        .youtube-link:hover { background: #d63031; color: white; }
 
-        .site-footer { padding: 20px; color: #636e72; font-size: 0.85rem; }
+        /* --- ANIMATIONS --- */
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
+        .fade-out { opacity: 0; transform: scale(0.5); transition: 0.4s ease; }
+
+        /* --- MODALS --- */
+        .settings-btn { background: none; border: 1px solid #dfe6e9; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
+        #settings-modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; 
+        }
+        .modal-box { background: white; padding: 35px; border-radius: 20px; width: 320px; text-align: center; animation: popIn 0.3s ease; }
+
+        @media (max-width: 600px) {
+            .input-bar { grid-template-columns: 1fr; }
+            .auth-box { width: 90%; }
+        }
     </style>
 </head>
 <body>
 
-<div id="authOverlay">
-    <div class="auth-card">
-        <h2 id="authTitle">Login to ChromePortal</h2>
-        <input type="email" id="authEmail" placeholder="Email Address">
-        <input type="password" id="authPass" placeholder="Password">
-        <button class="add-btn" style="width:100%" onclick="handleAuth()">Continue</button>
-        <p style="font-size: 0.8rem; margin-top: 15px; cursor: pointer; color: var(--accent);" onclick="toggleAuthMode()" id="authToggle">
-            Don't have an account? Sign Up
-        </p>
-    </div>
-</div>
-
-<div id="settingsModal">
-    <div class="settings-content">
-        <h3>User Settings</h3>
-        <p id="userEmailDisplay" style="color: #636e72;"></p>
-        <button onclick="closeSettings()" style="width:100%; margin-bottom: 10px; padding: 10px;">Close</button>
-        
-        <div class="danger-zone">
-            <h4>Danger Zone</h4>
-            <p style="font-size: 0.8rem; color: #d63031;">This action is permanent. All your shortcuts will be lost.</p>
-            <button class="del-acc-btn" onclick="deleteAccount()">DELETE ACCOUNT</button>
+    <div id="login-screen">
+        <div class="auth-box">
+            <h1 style="margin: 0 0 10px 0; color: var(--primary);">ChromePortal</h1>
+            <p style="color: #636e72; margin-bottom: 30px;">Your private shortcut hub</p>
+            
+            <button class="auth-btn google-btn" onclick="loginGoogle()">Sign in with Google</button>
+            <div style="margin: 15px 0; color: #b2bec3; font-size: 0.8rem; font-weight: bold;">OR</div>
+            
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="pass" placeholder="Password">
+            <button class="auth-btn email-btn" onclick="loginEmail()">Login / Sign Up</button>
+            
+            <button class="guest-btn" onclick="startGuest()">Stay logged out (data will not be saved)</button>
         </div>
     </div>
-</div>
 
-<div class="container" id="mainApp">
-    <header>
-        <h1>ChromePortal</h1>
-        <div class="nav-buttons">
-            <button onclick="openSettings()">⚙️ Settings</button>
-            <button onclick="logout()">Logout</button>
+    <div id="dashboard">
+        <div class="nav">
+            <h2 style="margin:0; font-weight: 800; letter-spacing: -0.5px;">My Portal</h2>
+            <div>
+                <button class="settings-btn" onclick="openSettings()">⚙️ Settings</button>
+                <button class="settings-btn" onclick="logout()" style="margin-left:8px;">Logout</button>
+            </div>
         </div>
-    </header>
 
-    <div class="input-panel">
-        <input type="text" id="siteName" placeholder="Site Name">
-        <input type="text" id="siteUrl" placeholder="URL (google.com)">
-        <button class="add-btn" onclick="addLink()">Add Shortcut</button>
+        <div class="input-bar">
+            <input type="text" id="site-name" placeholder="Name (e.g. YouTube)">
+            <input type="text" id="site-url" placeholder="URL (e.g. youtube.com)">
+            <button class="create-btn" onclick="addLink()">Create</button>
+        </div>
+
+        <div id="link-grid" class="link-grid"></div>
     </div>
 
-    <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Search your portal..." oninput="filterLinks()" style="width:100%">
+    <div id="settings-modal">
+        <div class="modal-box">
+            <h3 style="margin-top:0;">Account Settings</h3>
+            <p id="user-info" style="font-size: 0.9rem; color: #636e72; margin-bottom: 25px;"></p>
+            <button class="auth-btn email-btn" onclick="closeSettings()">Close</button>
+            <button class="auth-btn" style="background: var(--danger); color: white;" onclick="deleteAccount()">Delete Account</button>
+        </div>
     </div>
 
-    <div id="linkGrid" class="link-grid"></div>
-
-    <footer class="site-footer">
-        Portal Session: <span id="sessionDate"></span>
+    <footer class="site-footer" id="main-footer" style="display:none;">
+        <div class="footer-content">
+            <p>Created on 21 Feb 2026</p>
+            <span class="other-sites-label">My Other Projects</span>
+            <div class="footer-links">
+                <a href="https://mohakdev1220.github.io/toolify" target="_blank" class="f-link">🛠️ Toolify</a>
+                <a href="https://mohakdev1220.github.io/facts" target="_blank" class="f-link">💡 Facts</a>
+                <a href="https://www.youtube.com/@MOHAKCHOUBEY" target="_blank" class="f-link youtube-link">🎬 YouTube</a>
+            </div>
+        </div>
     </footer>
-</div>
 
-<script>
-    // --- 1. FIREBASE CONFIGURATION ---
-    const firebaseConfig = {
-       apiKey: "AIzaSyAoj4yHcaRW4wdOPA7SrZhGQZqAobHDdB0",
+    <script>
+        // --- FIREBASE CONFIGURATION ---
+        // REPLACE THE FOLLOWING WITH YOUR ACTUAL FIREBASE PROJECT KEYS
+        const firebaseConfig = {
+           apiKey: "AIzaSyAoj4yHcaRW4wdOPA7SrZhGQZqAobHDdB0",
   authDomain: "toolbox-hub-98c03.firebaseapp.com",
   projectId: "toolbox-hub-98c03",
   storageBucket: "toolbox-hub-98c03.firebasestorage.app",
   messagingSenderId: "321020105472",
   appId: "1:321020105472:web:698ba3bf9dfe75add859e5"
-};
-    };
+        };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-    let isSignUpMode = false;
-    let currentUser = null;
-    let userLinks = [];
+        let links = [];
+        let isGuest = false;
 
-    // --- 2. AUTHENTICATION LOGIC ---
-    function toggleAuthMode() {
-        isSignUpMode = !isSignUpMode;
-        document.getElementById('authTitle').innerText = isSignUpMode ? "Create Account" : "Login to ChromePortal";
-        document.getElementById('authToggle').innerText = isSignUpMode ? "Already have an account? Login" : "Don't have an account? Sign Up";
-    }
-
-    async function handleAuth() {
-        const email = document.getElementById('authEmail').value;
-        const pass = document.getElementById('authPass').value;
-        
-        try {
-            if (isSignUpMode) {
-                await auth.createUserWithEmailAndPassword(email, pass);
-            } else {
-                await auth.signInWithEmailAndPassword(email, pass);
-            }
-        } catch (error) {
-            alert(error.message);
+        // --- AUTHENTICATION ---
+        function loginGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider);
         }
-    }
 
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            currentUser = user;
-            document.getElementById('authOverlay').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('userEmailDisplay').innerText = user.email;
-            document.getElementById('sessionDate').innerText = new Date().toLocaleDateString();
-            loadLinks();
-        } else {
-            document.getElementById('authOverlay').style.display = 'flex';
-            document.getElementById('mainApp').style.display = 'none';
-        }
-    });
-
-    function logout() { auth.signOut(); }
-
-    async function deleteAccount() {
-        if (confirm("Are you absolutely sure? This cannot be undone.")) {
+        async function loginEmail() {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('pass').value;
+            if(!e || !p) return alert("Please enter both email and password");
             try {
-                // Delete user data from Firestore first
-                await db.collection("users").doc(currentUser.uid).delete();
-                // Delete auth account
-                await currentUser.delete();
-                alert("Account deleted.");
-            } catch (error) {
-                alert("Please logout and login again to verify your identity before deleting account.");
+                await auth.signInWithEmailAndPassword(e, p).catch(() => auth.createUserWithEmailAndPassword(e, p));
+            } catch (err) { alert(err.message); }
+        }
+
+        function startGuest() {
+            isGuest = true;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('main-footer').style.display = 'block';
+            links = JSON.parse(localStorage.getItem('guestLinks')) || [];
+            renderLinks();
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                isGuest = false;
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('main-footer').style.display = 'block';
+                document.getElementById('user-info').innerText = user.email;
+                loadData();
+            }
+        });
+
+        function logout() { auth.signOut(); location.reload(); }
+
+        // --- DATA MANAGEMENT ---
+        async function loadData() {
+            db.collection("users").doc(auth.currentUser.uid).onSnapshot(doc => {
+                links = doc.exists ? doc.data().links : [];
+                renderLinks();
+            });
+        }
+
+        async function addLink() {
+            const name = document.getElementById('site-name').value;
+            let url = document.getElementById('site-url').value;
+            if(!name || !url) return;
+            if(!url.startsWith('http')) url = 'https://' + url;
+
+            const newLink = { name, url, id: Date.now() };
+            links.push(newLink);
+
+            if(!isGuest) {
+                await db.collection("users").doc(auth.currentUser.uid).set({ links });
+            } else {
+                localStorage.setItem('guestLinks', JSON.stringify(links));
+                renderLinks();
+            }
+            document.getElementById('site-name').value = '';
+            document.getElementById('site-url').value = '';
+        }
+
+        function renderLinks() {
+            const grid = document.getElementById('link-grid');
+            grid.innerHTML = '';
+            links.forEach(l => {
+                const card = document.createElement('div');
+                card.className = 'link-card';
+                card.id = `card-${l.id}`;
+                card.onclick = () => window.open(l.url, '_blank');
+
+                card.innerHTML = `
+                    <button class="del-x" onclick="event.stopPropagation(); deleteLink(${l.id})">✕</button>
+                    <img src="https://www.google.com/s2/favicons?sz=64&domain=${l.url}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1243/1243933.png'">
+                    <span>${l.name}</span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function deleteLink(id) {
+            const card = document.getElementById(`card-${id}`);
+            card.classList.add('fade-out'); // Peak animation effect
+            
+            setTimeout(async () => {
+                links = links.filter(l => l.id !== id);
+                if(!isGuest) {
+                    await db.collection("users").doc(auth.currentUser.uid).update({ links });
+                } else {
+                    localStorage.setItem('guestLinks', JSON.stringify(links));
+                    renderLinks();
+                }
+            }, 350);
+        }
+
+        // --- MODAL CONTROLS ---
+        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
+        function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+        
+        async function deleteAccount() {
+            if(confirm("DANGER: This will permanently delete your account and all shortcuts. Are you sure?")) {
+                try {
+                    await db.collection("users").doc(auth.currentUser.uid).delete();
+                    auth.currentUser.delete().then(() => location.reload());
+                } catch (e) {
+                    alert("For security, please logout and login again before deleting your account.");
+                }
             }
         }
-    }
-
-    // --- 3. DATABASE LOGIC ---
-    async function loadLinks() {
-        db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
-            if (doc.exists) {
-                userLinks = doc.data().links || [];
-                renderLinks(userLinks);
-            }
-        });
-    }
-
-    async function addLink() {
-        const name = document.getElementById('siteName').value.trim();
-        let url = document.getElementById('siteUrl').value.trim();
-        if (!name || !url) return;
-        if (!url.startsWith('http')) url = 'https://' + url;
-
-        const newLink = { name, url, id: Date.now() };
-        userLinks.push(newLink);
-        
-        await db.collection("users").doc(currentUser.uid).set({ links: userLinks });
-        document.getElementById('siteName').value = '';
-        document.getElementById('siteUrl').value = '';
-    }
-
-    async function deleteLink(id) {
-        userLinks = userLinks.filter(l => l.id !== id);
-        await db.collection("users").doc(currentUser.uid).update({ links: userLinks });
-    }
-
-    // --- 4. UI RENDERING ---
-    function renderLinks(data) {
-        const grid = document.getElementById('linkGrid');
-        grid.innerHTML = '';
-        data.forEach(link => {
-            const card = document.createElement('div');
-            card.className = 'link-card';
-            card.onclick = () => window.open(link.url, '_blank');
-
-            const delBtn = document.createElement('button');
-            delBtn.className = 'delete-btn';
-            delBtn.innerHTML = '✕';
-            delBtn.onclick = (e) => { e.stopPropagation(); deleteLink(link.id); };
-
-            const img = document.createElement('img');
-            img.src = `https://www.google.com/s2/favicons?sz=64&domain=${link.url}`;
-            img.onerror = () => img.src = 'logo.png';
-
-            const a = document.createElement('a');
-            a.textContent = link.name;
-
-            card.append(delBtn, img, a);
-            grid.appendChild(card);
-        });
-    }
-
-    function filterLinks() {
-        const term = document.getElementById('searchBar').value.toLowerCase();
-        const filtered = userLinks.filter(l => l.name.toLowerCase().includes(term));
-        renderLinks(filtered);
-    }
-
-    function openSettings() { document.getElementById('settingsModal').style.display = 'flex'; }
-    function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
-</script>
+    </script>
 </body>
 </html>
