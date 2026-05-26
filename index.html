@@ -330,16 +330,14 @@
         });
     }
 
-    function openSettings() {
-        if(confirm("DANGER: Delete all cloud shortcuts and account data?")) {
-            db.collection("users").doc(auth.currentUser.uid).delete().then(() => {
-                auth.currentUser.delete().then(() => {
-                    alert("Account and data deleted.");
-                    location.reload();
-                });
-            });
-        }
+ function openSettings() {
+    if(confirm("Delete all cloud shortcuts?")) {
+        db.collection("users").doc(auth.currentUser.uid).delete().then(() => {
+            alert("Cloud data deleted.");
+            location.reload();
+        });
     }
+}
 
     // --- UX: ADD ON ENTER KEY ---
     document.addEventListener('keydown', (e) => {
